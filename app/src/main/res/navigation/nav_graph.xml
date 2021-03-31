@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/introOne">
+
+    <fragment
+        android:id="@+id/introOne"
+        android:name="com.example.canteenpoly.fragment.IntroOne"
+        android:label="fragment_intro_one"
+        tools:layout="@layout/fragment_intro_one" >
+        <action
+            android:id="@+id/action_introOne_to_introTwo"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:destination="@id/introTwo" />
+    </fragment>
+    <fragment
+        android:id="@+id/introTwo"
+        android:name="com.example.canteenpoly.fragment.IntroTwo"
+        android:label="fragment_intro_two"
+        tools:layout="@layout/fragment_intro_two" >
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_introTwo_to_introThree"
+            app:destination="@id/introThree" />
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_introTwo_to_introOne"
+            app:destination="@id/introOne" />
+    </fragment>
+    <fragment
+        android:id="@+id/introThree"
+        android:name="com.example.canteenpoly.fragment.IntroThree"
+        android:label="fragment_intro_three"
+        tools:layout="@layout/fragment_intro_three" >
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_introThree_to_introTwo"
+            app:destination="@id/introTwo" />
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_introThree_to_loginFrag"
+            app:destination="@id/loginFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFrag"
+        android:name="com.example.canteenpoly.fragment.LoginFrag"
+        android:label="fragment_login1"
+        tools:layout="@layout/fragment_login1" >
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_loginFrag_to_homeFrag"
+            app:destination="@id/homeFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFrag"
+        android:name="com.example.canteenpoly.fragment.HomeFrag"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_homeFrag_to_chatFrag"
+            app:destination="@id/chatFrag" />
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_homeFrag_to_profileFrag"
+            app:destination="@id/profileFrag" />
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_homeFrag_to_orderStaticFrag"
+            app:destination="@id/orderStaticFrag" />
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            android:id="@+id/action_homeFrag_to_productFrag"
+            app:destination="@id/productFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFrag"
+        android:name="com.example.canteenpoly.fragment.ChatFrag"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <action
+            android:id="@+id/action_chatFrag_to_chatDeal"
+            app:destination="@id/chatDeal" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/profileFrag"
+        android:name="com.example.canteenpoly.fragment.ProfileFrag"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+
+        <action
+            android:id="@+id/action_profileFrag_to_listImgFrag"
+            app:destination="@id/listImgFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderStaticFrag"
+        android:name="com.example.canteenpoly.fragment.OrderStaticFrag"
+        android:label="fragment_order_static"
+        tools:layout="@layout/fragment_order_static" >
+
+    </fragment>
+    <fragment
+        android:id="@+id/productFrag"
+        android:name="com.example.canteenpoly.fragment.ProductFrag"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product" >
+        <action
+            android:id="@+id/action_productFrag_to_addProductFrag"
+            app:destination="@id/addProductFrag" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/addProductFrag"
+        android:name="com.example.canteenpoly.fragment.AddProductFrag"
+        android:label="fragment_add_product"
+        tools:layout="@layout/fragment_add_product" />
+    <fragment
+        android:id="@+id/chatDeal"
+        android:name="com.example.canteenpoly.fragment.ChatDeal"
+        android:label="fragment_chat_deal"
+        tools:layout="@layout/fragment_chat_deal" >
+        <action
+            android:id="@+id/action_chatDeal_to_acceptFrag"
+            app:destination="@id/acceptFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/acceptFrag"
+        android:name="com.example.canteenpoly.fragment.AcceptFrag"
+        android:label="fragment_accept"
+        tools:layout="@layout/fragment_accept" />
+    <fragment
+        android:id="@+id/listImgFrag"
+        android:name="com.example.canteenpoly.fragment.ListImgFrag"
+        android:label="fragment_list_img"
+        tools:layout="@layout/fragment_list_img" />
+</navigation>

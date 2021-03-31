@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/profile_frag"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".fragment.ProfileFrag">
+
+    <include layout="@layout/action_bar_cus"/>
+    <LinearLayout
+        android:padding="@dimen/d_8"
+        android:layout_marginBottom="@dimen/d_8"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_avatar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/iconavatar" />
+        <EditText
+            android:drawableRight="@drawable/ic_baseline_edit_24"
+            android:padding="@dimen/d_8"
+            android:layout_marginTop="16dp"
+            android:hint="name"
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nguyễn Ngọc Anh" />
+
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <LinearLayout
+        android:padding="@dimen/d_8"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/edt_phone"
+            android:drawableRight="@drawable/ic_baseline_edit_24"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="SĐT: 090909090" />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <LinearLayout
+        android:padding="@dimen/d_8"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/edt_CanName"
+            android:drawableRight="@drawable/ic_baseline_edit_24"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tên quán: BEE1" />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <LinearLayout
+        android:padding="@dimen/d_8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/edt_address"
+            android:drawableRight="@drawable/ic_baseline_edit_24"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Địa chỉ: CANTEEN"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+    <Button
+        android:layout_gravity="right"
+        android:id="@+id/button5"
+        android:layout_marginTop="@dimen/d_8"
+        android:textColor="@color/black"
+        android:backgroundTint="#02FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Đăng xuất" />
+
+    <ImageView
+        android:layout_gravity="center_horizontal"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/d_40"
+        android:src="@drawable/profile1" />
+
+
+</LinearLayout>
