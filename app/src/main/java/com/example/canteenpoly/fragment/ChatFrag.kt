@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.example.canteenpoly.R
+import com.example.canteenpoly.model.Customer
+import com.example.canteenpoly.model.Message
+import com.example.canteenpoly.repository.CanteenDAO
 import kotlinx.android.synthetic.main.action_bar_cus.view.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -23,6 +26,7 @@ class ChatFrag : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    lateinit var canteenDAO: CanteenDAO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,13 +41,26 @@ class ChatFrag : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view  = inflater.inflate(R.layout.fragment_chat, container, false)
+        var view = inflater.inflate(R.layout.fragment_chat, container, false)
         view.textView15.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         view.textView16.text = "Chat"
         view.textView17.visibility = View.INVISIBLE
+        addChat()
         return view
+    }
+
+    private fun addChat() {
+//        canteenDAO = CanteenDAO()
+//        val customer = Customer("sBRcetOQU2hb1Fc8ktbHvGF7Nt42","default","Nguyen ngoc anh",
+//            "cFySA7zWSO2O6MCWqY95Bn:APA91bHkKbhkxARUgZccnRNr6RDstojTWfLf-oeEbNJeJH7QSbBIaYTLAjB0S-6CE96oAviaKjJ-yVPqlYs1P3cXVUhPPSS7gfhBBBvUbQgkq6JOyB6qGUVrzHfmjpn5yOgpbiUdfRdu",
+//        )
+//
+//        var listMes: ArrayList<String> = ArrayList()
+//
+//        var message = Message(customer,listMes)
+//        canteenDAO.addChat(HomeFrag.uid)
     }
 
     companion object {

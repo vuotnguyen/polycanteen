@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.ChatFrag">
@@ -10,7 +12,47 @@
 
     <include layout="@layout/action_bar_cus"/>
 
+    <TableRow
+        android:padding="@dimen/d_8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageView10"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/avatarmacdinh" />
+
+        <TextView
+            android:textColor="@color/black"
+            android:textSize="@dimen/d_24"
+            android:padding="@dimen/d_8"
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chats" />
+
+    </TableRow>
+
+    <EditText
+        android:hint="Search"
+        android:drawableLeft="@drawable/ic_baseline_search_24"
+        android:background="@drawable/shape"
+        android:id="@+id/editTextTextPersonName4"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_40"
+        android:layout_margin="@dimen/d_8"
+        android:paddingStart="@dimen/d_8"
+        android:ems="10"
+        android:inputType="textPersonName"
+        tools:ignore="RtlSymmetry" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="56dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </LinearLayout>

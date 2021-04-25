@@ -9,6 +9,7 @@ import androidx.navigation.Navigation
 import com.example.canteenpoly.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_intro_three.view.*
 import kotlinx.android.synthetic.main.fragment_intro_two.view.*
 
@@ -43,8 +44,13 @@ class IntroThree : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_intro_three, container, false)
+        if(FirebaseAuth.getInstance().currentUser != null){
+            view.bt_toHome.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_introThree_to_homeFrag) }
+        }else{
+            view.bt_toHome.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_introThree_to_loginFrag) }
+        }
         view.tv_prev3.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_introThree_to_introTwo) }
-        view.bt_toHome.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_introThree_to_loginFrag) }
+
         return view
 
     }

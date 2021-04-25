@@ -1,14 +1,20 @@
 package com.example.canteenpoly.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.canteenpoly.R
+import com.example.canteenpoly.model.Product
+import com.example.canteenpoly.model.User
+import com.example.canteenpoly.repository.CanteenDAO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -32,18 +38,14 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class LoginFrag : Fragment() {
+    private lateinit var key: String
     private lateinit var mGoogleSignInClient: GoogleSignInClient
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var auth: FirebaseAuth
-
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
-    }
+    private lateinit var canteenDAO: CanteenDAO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +53,26 @@ class LoginFrag : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+//        auth = FirebaseAuth.getInstance()
+//        val currentUser = auth.currentUser
+//        updateUI(currentUser)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
+        val callback: OnBackPressedCallback = object : OnBackPressedCallback(
+            true // default to enabled
+        ) {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,  // LifecycleOwner
+            callback
+        )
     }
 
     override fun onCreateView(
@@ -63,28 +80,40 @@ class LoginFrag : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view  = inflater.inflate(R.layout.fragment_login1, container, false)
+        var view = inflater.inflate(R.layout.fragment_login1, container, false)
         initView(view)
         return view
     }
 
     private fun initView(view: View) {
+
         view.sign_in_button.setOnClickListener { signIn() }
         auth = FirebaseAuth.getInstance()
-//        val account = GoogleSignIn.getLastSignedInAccount(context)
-//        updateUI(account)
+        canteenDAO = CanteenDAO()
+
     }
 
     private fun updateUI(currentUser: FirebaseUser?) {
-        if(currentUser != null){
+        if (currentUser != null) {
+            createUser(currentUser.uid)
+            Log.i("TAG", "updateUI: " + currentUser.uid)
             Navigation.findNavController(requireView()).navigate(R.id.action_loginFrag_to_homeFrag)
-        }
+        } else Toast.makeText(context, "signInWithCredential:failure", Toast.LENGTH_SHORT).show()
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    private fun createUser(uid: String) {
+        val listProduct: ArrayList<Product> = ArrayList()
+        val user = User("", uid, "default", "default", "default", "default", "default",ArrayList(), ArrayList(), ArrayList())
+
+        canteenDAO.addUser(user,uid, listProduct)
     }
 
     private fun signIn() {
         val signInIntent: Intent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, 100)
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
@@ -96,6 +125,7 @@ class LoginFrag : Fragment() {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
                 Log.d("TAG", "firebaseAuthWithGoogle:" + account.id)
+                key = account.email.toString()
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
@@ -103,15 +133,17 @@ class LoginFrag : Fragment() {
             }
         }
     }
+
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
-            .addOnCompleteListener {task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("TAG", "signInWithCredential:success")
                     val user = auth.currentUser
                     updateUI(user)
+                    Log.i("TAG", "firebaseAuthWithGoogle: " + user.email.toString())
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
@@ -121,6 +153,7 @@ class LoginFrag : Fragment() {
     }
 
     companion object {
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

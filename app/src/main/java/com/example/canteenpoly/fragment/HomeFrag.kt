@@ -1,14 +1,21 @@
 package com.example.canteenpoly.fragment
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.canteenpoly.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 
@@ -26,6 +33,7 @@ class HomeFrag : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private  var auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +52,29 @@ class HomeFrag : Fragment() {
             this,  // LifecycleOwner
             callback
         )
+
     }
 
 
+    @SuppressLint("CommitPrefEdits")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val bundle = bundleOf("uid" to auth.currentUser.uid)
+        uid = auth.currentUser.uid
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (!it.isSuccessful) {
+                Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_SHORT).show()
+            } else {
+//                sharePref = requireContext().getSharedPreferences("Token", Context.MODE_PRIVATE)
+//                editor = sharePref.edit()
+//                editor.putString("token", it.result.toString())
+//                editor.apply()
+                token = it.result.toString()
+            }
+        }
+
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_home, container, false)
         view.img_chat.setOnClickListener {
@@ -60,16 +84,20 @@ class HomeFrag : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_homeFrag_to_orderStaticFrag)
         }
         view.img_product.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_homeFrag_to_productFrag)
+            Navigation.findNavController(view).navigate(R.id.action_homeFrag_to_productFrag, bundle)
         }
         view.img_profile.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_homeFrag_to_profileFrag)
+            Navigation.findNavController(view).navigate(R.id.action_homeFrag_to_profileFrag, bundle)
         }
         return view
     }
 
 
     companion object {
+//        lateinit var editor: SharedPreferences.Editor
+//        lateinit var sharePref: SharedPreferences
+        var token = ""
+        var uid = ""
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

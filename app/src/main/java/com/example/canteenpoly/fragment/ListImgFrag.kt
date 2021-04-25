@@ -4,14 +4,10 @@ import android.annotation.SuppressLint
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,13 +15,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.canteenpoly.R
 import com.example.canteenpoly.adapter.ListImgAdaper
 import com.example.canteenpoly.callBack.BackListImg
-import com.example.canteenpoly.model.Canteen
 import kotlinx.android.synthetic.main.fragment_list_img.view.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+@SuppressLint("StaticFieldLeak")
 private lateinit var listImgAdaper: ListImgAdaper
 private lateinit var listImg: ArrayList<String>
 private lateinit var recyclerView: RecyclerView
@@ -55,7 +51,7 @@ class ListImgFrag : Fragment(), BackListImg {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view = inflater.inflate(R.layout.fragment_list_img, container, false)
+        val view = inflater.inflate(R.layout.fragment_list_img, container, false)
         initView(view)
         return view
     }
@@ -64,29 +60,29 @@ class ListImgFrag : Fragment(), BackListImg {
         listImg = getAllImgFromDevice()
         recyclerView = view.rv_listImg
         listImgAdaper = ListImgAdaper(listImg, requireContext(), this)
-        var manager = GridLayoutManager(requireContext(), 3, LinearLayoutManager.VERTICAL, false)
+        val manager = GridLayoutManager(requireContext(), 3, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = manager
         recyclerView.adapter = listImgAdaper
     }
 
     private fun getAllImgFromDevice(): ArrayList<String> {
         listImg = ArrayList()
-        var collumn: Array<String> =
+        val collumn: Array<String> =
             Array(3) { MediaStore.Images.Media._ID; MediaStore.Images.Media.TITLE;MediaStore.Images.Media.DATA }
-        var orderBy = MediaStore.Images.Media._ID
-        var cursor: Cursor = requireActivity().contentResolver.query(
+        val orderBy = MediaStore.Images.Media._ID
+        val cursor: Cursor = requireActivity().contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             collumn,
             null,
             null,
             orderBy
         )!!
-        var count = cursor.count
+        val count = cursor.count
         if(count >0){
             cursor.moveToFirst()
-            while (cursor.isAfterLast == false){
-                var index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                var path = cursor.getString(index)
+            while (!cursor.isAfterLast){
+                val index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val path = cursor.getString(index)
                 listImg.add(path)
                 cursor.moveToNext()
             }

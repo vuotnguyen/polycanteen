@@ -47,6 +47,9 @@
             app:exitAnim="@android:anim/fade_out"
             android:id="@+id/action_introThree_to_loginFrag"
             app:destination="@id/loginFrag" />
+        <action
+            android:id="@+id/action_introThree_to_homeFrag"
+            app:destination="@id/homeFrag" />
     </fragment>
     <fragment
         android:id="@+id/loginFrag"
@@ -104,6 +107,11 @@
         <action
             android:id="@+id/action_profileFrag_to_listImgFrag"
             app:destination="@id/listImgFrag" />
+        <action
+
+            app:popUpToInclusive="true"
+            android:id="@+id/action_profileFrag_to_loginFrag"
+            app:destination="@id/loginFrag" />
     </fragment>
     <fragment
         android:id="@+id/orderStaticFrag"
@@ -126,7 +134,11 @@
         android:id="@+id/addProductFrag"
         android:name="com.example.canteenpoly.fragment.AddProductFrag"
         android:label="fragment_add_product"
-        tools:layout="@layout/fragment_add_product" />
+        tools:layout="@layout/fragment_add_product" >
+        <action
+            android:id="@+id/action_addProductFrag_to_listImgFrag"
+            app:destination="@id/listImgFrag" />
+    </fragment>
     <fragment
         android:id="@+id/chatDeal"
         android:name="com.example.canteenpoly.fragment.ChatDeal"
