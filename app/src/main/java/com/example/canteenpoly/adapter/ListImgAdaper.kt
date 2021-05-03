@@ -33,7 +33,5 @@ class ListImgAdaper (private val listImg: ArrayList<String>,private val context:
         init {
             imageView = view.imageView8
         }
-
     }
-
 }

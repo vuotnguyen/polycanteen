@@ -10,14 +10,20 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
-
+import kotlin.math.log
 class CanteenDAO : ViewModel() {
     private var database = FirebaseDatabase.getInstance()
     private val myref = database.getReference("Canteen")
+    private val myrefChat = database.getReference("Chats")
     lateinit var userLiveData: MutableLiveData<User>
     lateinit var listProduct: MutableLiveData<ArrayList<Product>>
     lateinit var listPro: ArrayList<Product>
+
+    lateinit var listChatLive: MutableLiveData<ArrayList<String>>
+    lateinit var listChat: ArrayList<String>
+
+    lateinit var listMesLive: MutableLiveData<ArrayList<Message>>
+    lateinit var listMes: ArrayList<Message>
 
     fun addUser(user: User, uid: String, listProduct: ArrayList<Product>) {
         myref.child(uid).setValue(user)
@@ -88,5 +94,45 @@ class CanteenDAO : ViewModel() {
     fun addChat(key: String, message: Message){
         myref.child(key).child("chats").push().setValue(message)
     }
+    fun getListCustomer(id: String): MutableLiveData<ArrayList<String>>{
+        listChatLive = MutableLiveData()
+        listChat = ArrayList()
+        myref.child(id).child("chat").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    Log.i("TAG", "onDataChange: "+it.toString())
+                    listChat.add(it.value.toString())
+                }
+                listChatLive.postValue(listChat)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+        return listChatLive
+    }
+
+    fun getAllMes(idChat: String):MutableLiveData<ArrayList<Message>> {
+        listMesLive = MutableLiveData()
+        listMes = ArrayList()
+        myrefChat.child(idChat).child("listMes").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    listMes.add(it.getValue(Message::class.java)!!)
+                }
+                listMesLive.postValue(listMes)
+                Log.i("TAG", "getAllMes: "+ listMes.size)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+        return listMesLive
+    }
+
 
 }

@@ -46,12 +46,8 @@
         android:ems="10"
         android:inputType="textPersonName"
         tools:ignore="RtlSymmetry" />
-
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="56dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_listCustomer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
