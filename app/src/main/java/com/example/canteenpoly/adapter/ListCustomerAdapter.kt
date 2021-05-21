@@ -8,10 +8,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.canteenpoly.R
 import com.example.canteenpoly.callBack.ClickItem
+import com.example.canteenpoly.model.Chat
+import com.example.canteenpoly.repository.CanteenDAO
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.listcus_adapter.view.*
 
-class ListCustomerAdapter (private val listCus: ArrayList<String>, private val context: Context, private val even: ClickItem):
+class ListCustomerAdapter (
+    private val listCus: ArrayList<Chat>,
+    private val context: Context,
+    private val even: ClickItem):
     RecyclerView.Adapter<ListCustomerAdapter.ViewHolder>() {
 
 
@@ -21,8 +26,9 @@ class ListCustomerAdapter (private val listCus: ArrayList<String>, private val c
     }
 
     override fun onBindViewHolder(holder: ListCustomerAdapter.ViewHolder, position: Int) {
-        holder.itemView.setOnClickListener { even.gotoDetail(listCus[position]) }
-//        holder.tvLastMes.text = listCus.
+        holder.itemView.setOnClickListener { even.gotoDetail(listCus[position].key) }
+
+        holder.viewNoty.visibility = even.checkNoty(listCus[position].key)
     }
 
     override fun getItemCount(): Int {
@@ -32,10 +38,12 @@ class ListCustomerAdapter (private val listCus: ArrayList<String>, private val c
         val imageView: CircleImageView
         val tvName: TextView
         val tvLastMes: TextView
+        val viewNoty: View
         init {
             imageView = view.circleImageView
             tvName = view.textView21
             tvLastMes = view.textView20
+            viewNoty = view.viewNoti
         }
     }
 }

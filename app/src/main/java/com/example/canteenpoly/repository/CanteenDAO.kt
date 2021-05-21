@@ -3,27 +3,45 @@ package com.example.canteenpoly.repository
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.canteenpoly.model.Message
-import com.example.canteenpoly.model.Product
-import com.example.canteenpoly.model.User
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+
+import com.example.canteenpoly.model.*
+import com.google.firebase.database.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 import kotlin.math.log
+
 class CanteenDAO : ViewModel() {
     private var database = FirebaseDatabase.getInstance()
     private val myref = database.getReference("Canteen")
     private val myrefChat = database.getReference("Chats")
+    private val myrefProduct = database.getReference("Product")
+    private val myrefOder = database.getReference("Order")
     lateinit var userLiveData: MutableLiveData<User>
     lateinit var listProduct: MutableLiveData<ArrayList<Product>>
     lateinit var listPro: ArrayList<Product>
 
-    lateinit var listChatLive: MutableLiveData<ArrayList<String>>
-    lateinit var listChat: ArrayList<String>
+    lateinit var listChatLive: MutableLiveData<ArrayList<Chat>>
+    lateinit var listChat: ArrayList<Chat>
 
-    lateinit var listMesLive: MutableLiveData<ArrayList<Message>>
-    lateinit var listMes: ArrayList<Message>
+    lateinit var listMesLive: MutableLiveData<ArrayList<Message1>>
+    lateinit var listMes: ArrayList<Message1>
+
+    private val BASE_URL: String = "https://fcm.googleapis.com/"
+
+    @Singleton
+    fun provideRetrofit(): Retrofit {
+        return Retrofit.Builder().baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+    }
+
+    @Singleton
+    fun provideService(retrofit: Retrofit): RetrofitService {
+        return retrofit.create(RetrofitService::class.java)
+    }
 
     fun addUser(user: User, uid: String, listProduct: ArrayList<Product>) {
         myref.child(uid).setValue(user)
@@ -59,11 +77,11 @@ class CanteenDAO : ViewModel() {
         Log.i("TAG", "upDateuser: " )
     }
     fun addProduct(product: Product,uid: String){
-        myref.child(uid).child("listProduct").push().setValue(product)
+        myrefProduct.push().setValue(product)
     }
     fun getAllProduct(uid: String): MutableLiveData<ArrayList<Product>>{
         listProduct = MutableLiveData()
-        myref.child(uid).child("listProduct").addValueEventListener(object : ValueEventListener {
+        myrefProduct.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listPro = ArrayList()
                 snapshot.children.forEach {
@@ -84,24 +102,22 @@ class CanteenDAO : ViewModel() {
     fun updateProduct(product: Product, key: String) {
         val postValue = product.toMap()
         val upDateProduct = hashMapOf<String,Any>(product.key to postValue)
-        myref.child(key).child("listProduct").updateChildren(upDateProduct)
+        myrefProduct.updateChildren(upDateProduct)
     }
 
-    fun deleteProduct(key: String, uid: String):Boolean {
-        myref.child(uid).child("product").child(key).removeValue()
+    fun deleteProduct(key: String):Boolean {
+        myrefProduct.child(key).removeValue()
         return  true
     }
-    fun addChat(key: String, message: Message){
-        myref.child(key).child("chats").push().setValue(message)
-    }
-    fun getListCustomer(id: String): MutableLiveData<ArrayList<String>>{
+
+    fun getListCustomer(id: String): MutableLiveData<ArrayList<Chat>>{
         listChatLive = MutableLiveData()
         listChat = ArrayList()
-        myref.child(id).child("chat").addValueEventListener(object : ValueEventListener {
+        myrefChat.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
                     Log.i("TAG", "onDataChange: "+it.toString())
-                    listChat.add(it.value.toString())
+                    listChat.add(it.getValue(Chat::class.java)!!)
                 }
                 listChatLive.postValue(listChat)
             }
@@ -113,13 +129,14 @@ class CanteenDAO : ViewModel() {
         return listChatLive
     }
 
-    fun getAllMes(idChat: String):MutableLiveData<ArrayList<Message>> {
+    fun getAllMes(idChat: String):MutableLiveData<ArrayList<Message1>> {
         listMesLive = MutableLiveData()
         listMes = ArrayList()
         myrefChat.child(idChat).child("listMes").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                listMes.clear()
                 snapshot.children.forEach {
-                    listMes.add(it.getValue(Message::class.java)!!)
+                    listMes.add(0,it.getValue(Message1::class.java)!!)
                 }
                 listMesLive.postValue(listMes)
                 Log.i("TAG", "getAllMes: "+ listMes.size)
@@ -128,11 +145,94 @@ class CanteenDAO : ViewModel() {
             override fun onCancelled(error: DatabaseError) {
 
             }
-
         })
-
         return listMesLive
     }
+    fun checkNotyfi(idChat: String):MutableLiveData<Boolean> {
+        val rs = MutableLiveData<Boolean>()
+//        rs.postValue(false)
+        myrefChat.child(idChat).child("listMes").addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.i("TAG", "onChildAdded: "+ snapshot.toString())
+                val mes = snapshot.getValue(Message1::class.java)
+                if (mes!!.type == 1) {
+                    Log.i("TAG", "onChildAdded: " + mes.type)
+                    rs.postValue(true)
+                } else rs.postValue(false)
+            }
 
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+        return rs
+    }
+
+    fun addMesCan(mes: Message1, keyChat: String) {
+        myrefChat.child(keyChat).child("listMes").push().setValue(mes)
+    }
+    fun token(keyChat: String):MutableLiveData<String> {
+        val token = MutableLiveData<String>()
+        myrefChat.child(keyChat).child("tokenCustomer").addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val a: String = snapshot.value.toString()
+//                token.value = a
+                token.postValue(a)
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+        return token
+    }
+    fun sendNotifyUser(token: String) {
+        Log.i("TAG", "sendNotifyUser: "+ token)
+        val notifyModel = NotifyModel(token, Notify("Thông báo", "PolyCanteen đã trả lời tin nhắn của bạn"))
+        val userSend : Call<NotifyModel> = provideService(provideRetrofit()).sendNotifycation(notifyModel)
+        userSend.enqueue(object : Callback<NotifyModel> {
+            override fun onResponse(call: Call<NotifyModel>, response: Response<NotifyModel>) {
+                Log.i("TAG", "onResponse: "+ response.isSuccessful)
+            }
+            override fun onFailure(call: Call<NotifyModel>, t: Throwable) {
+
+            }
+        })
+    }
+    fun getAllOrder(): MutableLiveData<ArrayList<Deal>>{
+        val listOderLive = MutableLiveData<ArrayList<Deal>>()
+        val listOder = ArrayList<Deal>()
+        myrefOder.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    val deal = it.getValue(Deal::class.java)
+                    listOder.add(0, deal!!)
+                }
+                listOderLive.postValue(listOder)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+        return listOderLive
+    }
+
+    fun changStatus(key: String) {
+        myrefOder.child(key).child("status").setValue("Đã nhận")
+    }
 
 }

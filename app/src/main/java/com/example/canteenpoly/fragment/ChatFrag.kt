@@ -1,6 +1,7 @@
 package com.example.canteenpoly.fragment
 
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,11 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.canteenpoly.R
 import com.example.canteenpoly.adapter.ListCustomerAdapter
 import com.example.canteenpoly.callBack.ClickItem
-import com.example.canteenpoly.model.Customer
-import com.example.canteenpoly.model.Message
+import com.example.canteenpoly.model.Message1
 import com.example.canteenpoly.repository.CanteenDAO
 import kotlinx.android.synthetic.main.action_bar_cus.view.*
-import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_chat.view.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -78,6 +77,13 @@ class ChatFrag : Fragment(),ClickItem {
         val bundle = bundleOf("idChat" to idChat)
         Navigation.findNavController(requireView()).navigate(R.id.action_chatFrag_to_chatDetailFrag, bundle)
 
+    }
+
+    override fun checkNoty(idChat: String): Int {
+        canteenDAO.checkNotyfi(idChat).observe(viewLifecycleOwner, {
+            Log.i("TAG", "checkNoty: "+ it)
+        })
+        return View.GONE
     }
 
     private fun addChat() {

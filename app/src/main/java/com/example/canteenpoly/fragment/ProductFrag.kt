@@ -1,6 +1,7 @@
 package com.example.canteenpoly.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.canteenpoly.model.Product
 import com.example.canteenpoly.repository.CanteenDAO
 import kotlinx.android.synthetic.main.action_bar_cus.view.*
 import kotlinx.android.synthetic.main.fragment_product.view.*
+import kotlin.math.log
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -65,10 +67,9 @@ class ProductFrag : Fragment(),BackListProduct {
             listProduct = it
             listProductAdapter = ListProductAdapter(it, requireContext(), this)
             val manager =
-                GridLayoutManager(requireContext(), 3, LinearLayoutManager.VERTICAL, false)
+                GridLayoutManager(requireContext(), 2, LinearLayoutManager.VERTICAL, false)
             view.rv_listProduct.layoutManager = manager
             view.rv_listProduct.adapter = listProductAdapter
-
         })
     }
 
@@ -105,6 +106,6 @@ class ProductFrag : Fragment(),BackListProduct {
     }
 
     override fun deleteProduct(key: String): Boolean {
-        return canteenDAO.deleteProduct(key,uid)
+        return canteenDAO.deleteProduct(key)
     }
 }

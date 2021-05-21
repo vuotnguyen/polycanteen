@@ -12,6 +12,7 @@ import com.example.canteenpoly.R
 import com.example.canteenpoly.callBack.BackListProduct
 
 import com.example.canteenpoly.model.Product
+import de.hdodenhof.circleimageview.CircleImageView
 
 import kotlinx.android.synthetic.main.product_adapter.view.*
 
@@ -35,7 +36,7 @@ class ListProductAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(context).load(listProduct[position].avatarP).into(holder.imageView)
         holder.tvName.text = listProduct[position].nameP
-        holder.tvPrice.text = listProduct[position].price.toString()
+        holder.tvPrice.text = listProduct[position].price.toString() +" Vnđ"
         holder.itemView.setOnClickListener { even.updateProduct(listProduct[position]) }
         holder.itemView.setOnLongClickListener { even.deleteProduct(listProduct[position].key) }
     }
@@ -45,7 +46,7 @@ class ListProductAdapter(
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView
+        val imageView: CircleImageView
         val tvName: TextView
         val tvPrice: TextView
 

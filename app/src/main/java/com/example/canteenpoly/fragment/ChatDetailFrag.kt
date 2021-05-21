@@ -1,11 +1,22 @@
 package com.example.canteenpoly.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.canteenpoly.R
+import com.example.canteenpoly.adapter.MesCanAdapter
+import com.example.canteenpoly.model.Message1
+import com.example.canteenpoly.repository.CanteenDAO
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.android.synthetic.main.action_bar_cus.view.*
+import kotlinx.android.synthetic.main.fragment_chat_detail.view.*
+
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +32,9 @@ class ChatDetailFrag : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var canteenDAO: CanteenDAO
+    private lateinit var recyclerView: RecyclerView
+    lateinit var mesCanAdapter: MesCanAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +48,39 @@ class ChatDetailFrag : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_detail, container, false)
+        val view = inflater.inflate(R.layout.fragment_chat_detail, container, false)
+        view.textView15.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        view.textView16.text = "Chat detail"
+        view.textView17.visibility = View.INVISIBLE
+        initView(view)
+        return view
+    }
+
+    private fun initView(view: View) {
+        recyclerView = view.rv_mes
+        val keyChat = arguments?.getString("idChat")
+        canteenDAO = CanteenDAO()
+        canteenDAO.getAllMes(keyChat!!).observe(viewLifecycleOwner, {
+            mesCanAdapter = MesCanAdapter(it, requireContext())
+            recyclerView.layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                true
+            )
+            recyclerView.adapter = mesCanAdapter
+        })
+        view.img_send.setOnClickListener {
+            val mes = view.edt_comment.text.toString()
+            val message1 = Message1(1, mes)
+            canteenDAO.addMesCan(message1, keyChat)
+            view.edt_comment.text = null
+            canteenDAO.token(keyChat).observe(viewLifecycleOwner,{
+                canteenDAO.sendNotifyUser("c2J46wo_RFi-tFkAlW1isf:APA91bG5EYp5SAEb9lmGWgpjakoVlTO5kShX63bKG_BQH7gAKywHteZaIw4uzuMx9vbFLBBZSeHLny_XDqV6LrF6V0rdnE5Gwa5J6cjgkJ92s-oOoekEvTTyuo_1tLjLEcSjo4dhAfVV")
+            })
+//
+        }
     }
 
     companion object {

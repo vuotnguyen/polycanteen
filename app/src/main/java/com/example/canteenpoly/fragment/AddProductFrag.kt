@@ -79,9 +79,9 @@ class AddProductFrag : Fragment() {
 
             view.button4.visibility = View.VISIBLE
             Glide.with(view).load(product.avatarP).into(view.imageView5)
-            view.editTextTextPersonName.setText(product.nameP)
+            view.edt_nameP.setText(product.nameP)
             view.editTextTextPersonName2.setText(product.price.toString())
-            view.editTextTextPersonName3.setText(product.detail)
+            view.edt_detail.setText(product.detail)
         }
         listProduct = ArrayList()
         //create spinner
@@ -112,9 +112,9 @@ class AddProductFrag : Fragment() {
             }
 
             when(""){
-                editTextTextPersonName.text.toString(),
+                edt_nameP.text.toString(),
                 editTextTextPersonName2.text.toString(),
-                editTextTextPersonName3.text.toString()-> Toast.makeText(context,"Nhap vao de",Toast.LENGTH_LONG).show()
+                edt_detail.text.toString()-> Toast.makeText(context,"Nhap vao de",Toast.LENGTH_LONG).show()
                 else -> {
                     Log.i("TAG", "initView: "+uid)
                     product.key = ""
@@ -125,14 +125,14 @@ class AddProductFrag : Fragment() {
             }
         }
         view.button4.setOnClickListener {
-            canteenDAO.updateProduct(product,uid)
-            Log.i("TAG", "initView: "+arguments?.getString("uid"))
+            canteenDAO.updateProduct(product,product.key)
+            Log.i("TAG", "initView: "+product.key)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        editTextTextPersonName.addTextChangedListener {
+        edt_nameP.addTextChangedListener {
             product.nameP = it.toString()
         }
         editTextTextPersonName2.addTextChangedListener {
@@ -140,7 +140,7 @@ class AddProductFrag : Fragment() {
                 product.price = it.toString().toInt()
             }else product.price = 0
         }
-        editTextTextPersonName3.addTextChangedListener {
+        edt_detail.addTextChangedListener {
             product.detail = it.toString()
         }
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{

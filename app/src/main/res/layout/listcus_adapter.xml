@@ -37,4 +37,16 @@
         app:layout_constraintStart_toEndOf="@+id/circleImageView"
         app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
+    <View
+        android:visibility="gone"
+        android:id="@+id/viewNoti"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/notyfi"
+
+        app:layout_constraintStart_toStartOf="@+id/circleImageView"
+        app:layout_constraintTop_toTopOf="@+id/circleImageView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

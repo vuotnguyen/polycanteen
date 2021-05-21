@@ -122,6 +122,9 @@
         android:label="fragment_order_static"
         tools:layout="@layout/fragment_order_static" >
 
+        <action
+            android:id="@+id/action_orderStaticFrag_to_confirmOrder"
+            app:destination="@id/confirmOrder" />
     </fragment>
     <fragment
         android:id="@+id/productFrag"
@@ -166,4 +169,9 @@
         android:name="com.example.canteenpoly.fragment.ChatDetailFrag"
         android:label="fragment_chat_detail"
         tools:layout="@layout/fragment_chat_detail" />
+    <fragment
+        android:id="@+id/confirmOrder"
+        android:name="com.example.canteenpoly.fragment.ConfirmOrder"
+        android:label="fragment_confirm_order"
+        tools:layout="@layout/fragment_confirm_order" />
 </navigation>

@@ -14,7 +14,7 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_marginTop="@dimen/d_40"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/logopoly" />
@@ -31,7 +31,7 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_marginTop="@dimen/d_24"
+        android:layout_marginTop="@dimen/d_40"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/icfood" />
@@ -75,16 +75,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/d_40"/>
 
-        <TextView
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:padding="@dimen/d_8"
-            android:text="SKIP"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
+
 
         <TextView
             android:id="@+id/tv_next1"

@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:background="#EFEFEF"
+
     android:layout_height="match_parent"
     tools:context=".fragment.ProductFrag">
 
@@ -10,6 +12,7 @@
     <include layout="@layout/action_bar_cus"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:padding="@dimen/d_8"
         android:id="@+id/rv_listProduct"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

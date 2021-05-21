@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.canteenpoly.R
 import com.example.canteenpoly.adapter.ListImgAdaper
 import com.example.canteenpoly.callBack.BackListImg
+import com.example.canteenpoly.repository.FireStoreApp
 import kotlinx.android.synthetic.main.fragment_list_img.view.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -36,6 +37,7 @@ class ListImgFrag : Fragment(), BackListImg {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    lateinit var fireStorage: FireStoreApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,6 +114,8 @@ class ListImgFrag : Fragment(), BackListImg {
 
     @SuppressLint("ResourceType")
     override fun sendPath(path: String) {
+        fireStorage = FireStoreApp()
+        fireStorage.upFile(path)
         findNavController().previousBackStackEntry?.savedStateHandle?.set("key", path)
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }

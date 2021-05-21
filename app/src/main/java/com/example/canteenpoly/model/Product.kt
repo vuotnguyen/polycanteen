@@ -46,7 +46,6 @@ import androidx.versionedparcelable.ParcelField
 
         )
     }
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(key)
         parcel.writeString(avatarP)

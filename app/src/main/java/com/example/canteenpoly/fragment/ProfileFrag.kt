@@ -1,13 +1,15 @@
 package com.example.canteenpoly.fragment
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import android.widget.Toast
-
+import androidx.core.app.ActivityCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -16,11 +18,13 @@ import com.bumptech.glide.Glide
 import com.example.canteenpoly.R
 import com.example.canteenpoly.model.User
 import com.example.canteenpoly.repository.CanteenDAO
+import com.example.canteenpoly.repository.FireStoreApp
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.android.synthetic.main.action_bar_cus.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,6 +43,7 @@ class ProfileFrag : Fragment() {
     private var param2: String? = null
     private lateinit var user: User
     private lateinit var canteenDAO: CanteenDAO
+    lateinit var fireStoreApp: FireStoreApp
     lateinit var uid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,9 +75,31 @@ class ProfileFrag : Fragment() {
         val nameCan = view.edt_CanName.text.toString()
         val address = view.edt_address.text.toString()
         if(ProductFrag.listProduct == null){
-            user = User(HomeFrag.token,uid,"", name, phone, nameCan, address,ArrayList(), ArrayList(),ArrayList())
+            user = User(
+                HomeFrag.token,
+                uid,
+                "",
+                name,
+                phone,
+                nameCan,
+                address,
+                ArrayList(),
+                ArrayList(),
+                ArrayList()
+            )
         }else{
-            user = User(HomeFrag.token,uid,"", name, phone, nameCan, address,ArrayList(), ArrayList(),ProductFrag.listProduct)
+            user = User(
+                HomeFrag.token,
+                uid,
+                "",
+                name,
+                phone,
+                nameCan,
+                address,
+                ArrayList(),
+                ArrayList(),
+                ProductFrag.listProduct
+            )
         }
 
         navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("key")?.observe(
@@ -80,27 +107,51 @@ class ProfileFrag : Fragment() {
         ) { result ->
 
             user.avatar = result
-            Glide.with(view).load(result).into(view.img_avatar)
-
+            fireStoreApp = FireStoreApp()
+            fireStoreApp.downloadFile("images/avatar")
+                .observe(viewLifecycleOwner, {
+                Log.i("TAG", "avatarUri: "+ it)
+                Glide.with(view).load("https://firebasestorage.googleapis.com/v0/b/polycanteen.appspot.com/o/images%2Favatar?alt=media&token=0dce5f8b-41f2-44f6-9f5f-759a4eb606e6").into(view.img_avatar)
+            })
         }
     }
+
 
     private fun intnitView(view: View) {
         canteenDAO = CanteenDAO()
         view.textView16.text = "Profile"
-        view.textView17.text = "UpDate"
+        view.textView17.setBackgroundResource(R.drawable.ic_baseline_update_24)
 
         //getUser to update on firebase
         uid = arguments?.getString("uid").toString()
 
-        Log.i("TAG", "intnitView: "+uid)
+        Log.i("TAG", "intnitView: " + uid)
 
         //getUser in firebase to View
         getUserRealTime(view)
 
         //getall image in device
         view.img_avatar.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_profileFrag_to_listImgFrag)
+
+            val result = requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+            if(result ==0){
+                Navigation.findNavController(view).navigate(R.id.action_profileFrag_to_listImgFrag)
+            }else {
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("Thông báo")
+                builder.setMessage("Không được phép truy cập bộ nhớ, Cần xin quyền truy cập")
+                builder.setPositiveButton("Yes") { dialog, which ->
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        100
+                    )
+                }
+                builder.setNegativeButton("No") { dialog, which ->
+                    dialog.cancel()
+                }
+                builder.show()
+            }
         }
         view.textView17.setOnClickListener { updateFireBase() }
         view.button5.setOnClickListener {
@@ -109,6 +160,22 @@ class ProfileFrag : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_profileFrag_to_loginFrag)
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                ActivityCompat.finishAffinity(requireActivity())
+            }
+        }
+    }
+
 
     private fun getUserRealTime(view: View) {
         canteenDAO.getUser(uid).observe(viewLifecycleOwner, {
@@ -149,7 +216,7 @@ class ProfileFrag : Fragment() {
 
         Log.i("TAG", "updateFireBase: " + user.nameboss)
         canteenDAO.upDateuser(user, uid)
-        Toast.makeText(context,"Update Success",Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Update Success", Toast.LENGTH_LONG).show()
     }
 
     companion object {
