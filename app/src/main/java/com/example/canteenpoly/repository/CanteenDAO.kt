@@ -12,7 +12,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
-import kotlin.math.log
 
 class CanteenDAO : ViewModel() {
     private var database = FirebaseDatabase.getInstance()
@@ -151,14 +150,14 @@ class CanteenDAO : ViewModel() {
     fun checkNotyfi(idChat: String):MutableLiveData<Boolean> {
         val rs = MutableLiveData<Boolean>()
 //        rs.postValue(false)
-        myrefChat.child(idChat).child("listMes").addChildEventListener(object : ChildEventListener {
+        myrefChat.child(idChat).addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 Log.i("TAG", "onChildAdded: "+ snapshot.toString())
-                val mes = snapshot.getValue(Message1::class.java)
-                if (mes!!.type == 1) {
-                    Log.i("TAG", "onChildAdded: " + mes.type)
-                    rs.postValue(true)
-                } else rs.postValue(false)
+//                val mes = snapshot.getValue(Message1::class.java)
+//                if (mes!!.type == 1) {
+//                    Log.i("TAG", "onChildAdded: " + mes.type)
+//                    rs.postValue(true)
+//                } else rs.postValue(false)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -222,17 +221,18 @@ class CanteenDAO : ViewModel() {
                 }
                 listOderLive.postValue(listOder)
             }
-
             override fun onCancelled(error: DatabaseError) {
-
             }
-
         })
         return listOderLive
     }
 
     fun changStatus(key: String) {
         myrefOder.child(key).child("status").setValue("Đã nhận")
+    }
+
+    fun upAvatarCanteen(it: String, uid: String) {
+        myref.child(uid).child("avatar").setValue(it)
     }
 
 }

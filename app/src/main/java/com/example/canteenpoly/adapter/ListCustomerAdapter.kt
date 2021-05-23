@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.canteenpoly.R
 import com.example.canteenpoly.callBack.ClickItem
 import com.example.canteenpoly.model.Chat
-import com.example.canteenpoly.repository.CanteenDAO
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.listcus_adapter.view.*
 
@@ -26,7 +26,9 @@ class ListCustomerAdapter (
     }
 
     override fun onBindViewHolder(holder: ListCustomerAdapter.ViewHolder, position: Int) {
-        holder.itemView.setOnClickListener { even.gotoDetail(listCus[position].key) }
+        holder.itemView.setOnClickListener { even.gotoDetail(listCus[position].key, listCus[position].urlCus) }
+        holder.tvName.text = listCus[position].nameCus
+        Glide.with(context).load(listCus[position].urlCus).into(holder.imageView)
 
         holder.viewNoty.visibility = even.checkNoty(listCus[position].key)
     }

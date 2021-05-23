@@ -1,7 +1,5 @@
 package com.example.canteenpoly.callBack
 
-import android.view.View
-
 interface BackListImg {
-    fun sendPath(path: String)
+    fun sendPath(path: String, type: Int)
 }

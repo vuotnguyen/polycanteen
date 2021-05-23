@@ -15,7 +15,8 @@ import kotlinx.android.synthetic.main.viewtpye_mesuser.view.*
 
 class MesCanAdapter(
     private val listMes: ArrayList<Message1>,
-    private val context: Context
+    private val context: Context,
+    private  val urlCus: String?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
@@ -42,7 +43,7 @@ class MesCanAdapter(
                 }
                 is ViewHolderUser ->{
                     holder.tv_MesUer.text = message.content
-                    Glide.with(context).load("https://cdnb.artstation.com/p/assets/images/images/009/836/467/medium/maria-bo-schatzis-stream-profilpicture.jpg?1521139318").into(holder.img_User)
+                    Glide.with(context).load(urlCus).into(holder.img_User)
                 }
             }
         }

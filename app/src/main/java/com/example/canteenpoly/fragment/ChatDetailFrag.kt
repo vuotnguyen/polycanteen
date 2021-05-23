@@ -1,7 +1,6 @@
 package com.example.canteenpoly.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import com.example.canteenpoly.R
 import com.example.canteenpoly.adapter.MesCanAdapter
 import com.example.canteenpoly.model.Message1
 import com.example.canteenpoly.repository.CanteenDAO
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.action_bar_cus.view.*
 import kotlinx.android.synthetic.main.fragment_chat_detail.view.*
 
@@ -61,9 +59,11 @@ class ChatDetailFrag : Fragment() {
     private fun initView(view: View) {
         recyclerView = view.rv_mes
         val keyChat = arguments?.getString("idChat")
+        val urlCus = arguments?.getString("img")
+
         canteenDAO = CanteenDAO()
         canteenDAO.getAllMes(keyChat!!).observe(viewLifecycleOwner, {
-            mesCanAdapter = MesCanAdapter(it, requireContext())
+            mesCanAdapter = MesCanAdapter(it, requireContext(), urlCus)
             recyclerView.layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.VERTICAL,

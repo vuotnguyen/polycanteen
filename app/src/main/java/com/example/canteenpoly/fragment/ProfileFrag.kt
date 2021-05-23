@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -108,12 +109,14 @@ class ProfileFrag : Fragment() {
 
             user.avatar = result
             fireStoreApp = FireStoreApp()
-            fireStoreApp.downloadFile("images/avatar")
+            fireStoreApp.downloadFile(result)
                 .observe(viewLifecycleOwner, {
-                Log.i("TAG", "avatarUri: "+ it)
-                Glide.with(view).load("https://firebasestorage.googleapis.com/v0/b/polycanteen.appspot.com/o/images%2Favatar?alt=media&token=0dce5f8b-41f2-44f6-9f5f-759a4eb606e6").into(view.img_avatar)
+                canteenDAO.upAvatarCanteen(it,uid)
+                    Glide.with(view).load(it).into(view.img_avatar)
             })
         }
+
+
     }
 
 
@@ -135,7 +138,8 @@ class ProfileFrag : Fragment() {
 
             val result = requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
             if(result ==0){
-                Navigation.findNavController(view).navigate(R.id.action_profileFrag_to_listImgFrag)
+                val bundle = bundleOf("type" to 0)
+                Navigation.findNavController(view).navigate(R.id.action_profileFrag_to_listImgFrag,bundle)
             }else {
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Thông báo")
@@ -180,6 +184,7 @@ class ProfileFrag : Fragment() {
     private fun getUserRealTime(view: View) {
         canteenDAO.getUser(uid).observe(viewLifecycleOwner, {
             if (it.avatar == "default" || it.avatar == "") {
+                Glide.with(view).load("https://anhdep123.com/wp-content/uploads/2021/05/hinh-avatar-trang.jpg").into(view.img_avatar)
             } else Glide.with(view).load(it.avatar).into(view.img_avatar)
             view.textView6.setText(it.nameboss)
             view.edt_phone.setText(it.phone)

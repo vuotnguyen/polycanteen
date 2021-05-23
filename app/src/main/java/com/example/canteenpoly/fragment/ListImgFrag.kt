@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +16,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.canteenpoly.R
 import com.example.canteenpoly.adapter.ListImgAdaper
 import com.example.canteenpoly.callBack.BackListImg
+import com.example.canteenpoly.repository.CanteenDAO
 import com.example.canteenpoly.repository.FireStoreApp
 import kotlinx.android.synthetic.main.fragment_list_img.view.*
+import kotlin.math.log
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+
 @SuppressLint("StaticFieldLeak")
 private lateinit var listImgAdaper: ListImgAdaper
 private lateinit var listImg: ArrayList<String>
@@ -38,6 +42,8 @@ class ListImgFrag : Fragment(), BackListImg {
     private var param1: String? = null
     private var param2: String? = null
     lateinit var fireStorage: FireStoreApp
+    var type: Int = 0
+    private lateinit var canteenDAO: CanteenDAO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,9 +65,12 @@ class ListImgFrag : Fragment(), BackListImg {
     }
 
     private fun initView(view: View) {
+        canteenDAO = CanteenDAO()
+        type = arguments?.getInt("type")!!
+        Log.i("ListImG", "initView: " + type)
         listImg = getAllImgFromDevice()
         recyclerView = view.rv_listImg
-        listImgAdaper = ListImgAdaper(listImg, requireContext(), this)
+        listImgAdaper = ListImgAdaper(listImg, requireContext(), this, type)
         val manager = GridLayoutManager(requireContext(), 3, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = manager
         recyclerView.adapter = listImgAdaper
@@ -80,9 +89,9 @@ class ListImgFrag : Fragment(), BackListImg {
             orderBy
         )!!
         val count = cursor.count
-        if(count >0){
+        if (count > 0) {
             cursor.moveToFirst()
-            while (!cursor.isAfterLast){
+            while (!cursor.isAfterLast) {
                 val index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 val path = cursor.getString(index)
                 listImg.add(path)
@@ -113,10 +122,10 @@ class ListImgFrag : Fragment(), BackListImg {
     }
 
     @SuppressLint("ResourceType")
-    override fun sendPath(path: String) {
+    override fun sendPath(path: String, type: Int) {
         fireStorage = FireStoreApp()
-        fireStorage.upFile(path)
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("key", path)
+        val pathInStore = fireStorage.upFile(path, type)
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("key", pathInStore)
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 

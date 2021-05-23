@@ -1,7 +1,6 @@
 package com.example.canteenpoly.fragment
 
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,10 +10,10 @@ import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.canteenpoly.R
 import com.example.canteenpoly.adapter.ListCustomerAdapter
 import com.example.canteenpoly.callBack.ClickItem
-import com.example.canteenpoly.model.Message1
 import com.example.canteenpoly.repository.CanteenDAO
 import kotlinx.android.synthetic.main.action_bar_cus.view.*
 import kotlinx.android.synthetic.main.fragment_chat.view.*
@@ -51,32 +50,35 @@ class ChatFrag : Fragment(),ClickItem {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view = inflater.inflate(R.layout.fragment_chat, container, false)
+        val view = inflater.inflate(R.layout.fragment_chat, container, false)
         view.textView15.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         view.textView16.text = "Chat"
         view.textView17.visibility = View.INVISIBLE
-
         initView(view)
         return view
     }
 
     private fun initView(view: View) {
+
         linearLayoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
         rvCus = view.rv_listCustomer
         canteenDAO = CanteenDAO()
+        canteenDAO.getUser(HomeFrag.uid).observe(viewLifecycleOwner,{
+            Glide.with(requireContext()).load(it.avatar).into(view.imageView10)
+        })
+
         canteenDAO.getListCustomer(HomeFrag.uid).observe(viewLifecycleOwner,{
             listCustomerAdapter = ListCustomerAdapter(it,requireContext(),this)
             rvCus.layoutManager = linearLayoutManager
             rvCus.adapter = listCustomerAdapter
         })
     }
-    override fun gotoDetail(idChat: String) {
+    override fun gotoDetail(idChat: String, urlCus: String) {
         Log.i("TAG", "gotoDetail: "+ "goto detail")
-        val bundle = bundleOf("idChat" to idChat)
+        val bundle = bundleOf("idChat" to idChat, "img" to urlCus )
         Navigation.findNavController(requireView()).navigate(R.id.action_chatFrag_to_chatDetailFrag, bundle)
-
     }
 
     override fun checkNoty(idChat: String): Int {

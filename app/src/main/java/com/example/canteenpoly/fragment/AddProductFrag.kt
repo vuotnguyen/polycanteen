@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.example.canteenpoly.R
 import com.example.canteenpoly.model.Product
 import com.example.canteenpoly.repository.CanteenDAO
+import com.example.canteenpoly.repository.FireStoreApp
 import kotlinx.android.synthetic.main.fragment_add_product.*
 import kotlinx.android.synthetic.main.fragment_add_product.view.*
 
@@ -36,6 +38,7 @@ class AddProductFrag : Fragment() {
     private var product = Product()
     private lateinit var listProduct: ArrayList<Product>
     private var canteenDAO = CanteenDAO()
+    private var fireStoreApp = FireStoreApp()
     lateinit var uid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,8 +106,9 @@ class AddProductFrag : Fragment() {
             it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             view.spinner2.adapter = it
         }
+        val bundle = bundleOf("type" to 1)
         view.tv_chooseimage.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_addProductFrag_to_listImgFrag)
+            Navigation.findNavController(view).navigate(R.id.action_addProductFrag_to_listImgFrag,bundle)
         }
         view.button3.setOnClickListener {
             if(product.avatarP == ""){
@@ -118,14 +122,25 @@ class AddProductFrag : Fragment() {
                 else -> {
                     Log.i("TAG", "initView: "+uid)
                     product.key = ""
-                    listProduct.add(product)
-                    canteenDAO.addProduct(product,uid)
+                    fireStoreApp.downloadFile("images/avatar")
+                        .observe(viewLifecycleOwner, {
+                            product.avatarP = it
+                            listProduct.add(product)
+                            canteenDAO.addProduct(product,uid)
+                        })
 
+                    Toast.makeText(requireContext(),"Thêm thành công", Toast.LENGTH_SHORT).show()
                 }
             }
         }
         view.button4.setOnClickListener {
-            canteenDAO.updateProduct(product,product.key)
+            fireStoreApp.downloadFile("images/avatar")
+                .observe(viewLifecycleOwner, {
+                    product.avatarP = it
+                    canteenDAO.updateProduct(product,product.key)
+                })
+
+
             Log.i("TAG", "initView: "+product.key)
         }
     }

@@ -11,7 +11,7 @@ import com.example.canteenpoly.R
 import com.example.canteenpoly.callBack.BackListImg
 import kotlinx.android.synthetic.main.img_adapter.view.*
 
-class ListImgAdaper (private val listImg: ArrayList<String>,private val context: Context,private val even: BackListImg):
+class ListImgAdaper (private val listImg: ArrayList<String>,private val context: Context,private val even: BackListImg,private val type: Int):
     RecyclerView.Adapter<ListImgAdaper.ViewHolder>() {
 
 
@@ -22,7 +22,7 @@ class ListImgAdaper (private val listImg: ArrayList<String>,private val context:
 
     override fun onBindViewHolder(holder: ListImgAdaper.ViewHolder, position: Int) {
         Glide.with(context).load(listImg[position]).into(holder.imageView)
-        holder.imageView.setOnClickListener { even.sendPath(listImg[position]) }
+        holder.imageView.setOnClickListener { even.sendPath(listImg[position],type) }
     }
 
     override fun getItemCount(): Int {
